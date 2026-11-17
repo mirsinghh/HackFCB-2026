@@ -2,6 +2,12 @@
 
 *More than a Hack 2027, Phase 1 (BAR-ATH). Technical document, team HackFCB.*
 
+| Participant | Email |
+|---|---|
+| Jasmine Singh Kaur | jasminek1024@gmail.com |
+| Carla Lujan | carla.lujan@estudiantat.upc.edu |
+| Mir Singh | singhmir62@gmail.com |
+
 ## 1. What we did, in short
 
 We label each of the 199,319 frames of the tactical video as home possession (`H`), away possession (`A`), dead ball (`D`), or `X` for the frames the scorer ignores. Everything comes from the tactical tracking file. We did not use video, we did not label anything by hand, and we did not bring in any outside data.

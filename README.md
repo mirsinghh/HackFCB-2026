@@ -1,5 +1,11 @@
 # Our solution (submission repository)
 
+**Team HackFCB**
+
+- Jasmine Singh Kaur - jasminek1024@gmail.com
+- Carla Lujan - carla.lujan@estudiantat.upc.edu
+- Mir Singh - singhmir62@gmail.com
+
 Possession labels for BAR-ATH produced from the tactical ATD only. Approach, assets, rules and
 limitations: **[docs/HackFCB.pdf](docs/HackFCB.pdf)** (source: [docs/report.md](docs/report.md)).
 
