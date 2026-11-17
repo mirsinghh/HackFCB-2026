@@ -11,14 +11,29 @@ from scipy.ndimage import uniform_filter1d
 FPS = 25
 
 
+def _half_sign(P, team, a, b):
+    """+1 if the home team is, on the median frame of the block, on the left of the away team."""
+    seg = P[a:b + 1]
+    with np.errstate(all="ignore"):
+        xh = np.nanmedian(np.nanmean(seg[:, team == 0, 0], 1))
+        xa = np.nanmedian(np.nanmean(seg[:, team == 1, 0], 1))
+    return 1.0 if xh < xa else -1.0
+
+
 def attack_signs(P, team, blocks):
-    """+1 if the home team attacks towards +x in that half. Teams start the half in their own
-    half of the pitch, so the side a team occupies in the first 10 s of tracking is its own."""
-    signs = []
-    for a, b in blocks:
-        seg = P[a:a + 250]
-        xh = np.nanmean(seg[:, team == 0, 0]); xa = np.nanmean(seg[:, team == 1, 0])
-        signs.append(1.0 if xh < xa else -1.0)  # home on the left => attacks right (+x)
+    """+1 if the home team attacks towards +x in that half.
+
+    The sides are read from the whole first half (median over frames of each team's mean x) and the
+    second half is its mirror image, because teams change ends at half-time. We do NOT read the
+    start of the second block: it begins ~2 minutes before kick-off, while players are still
+    walking onto the pitch, and gives the wrong side. The second half is checked against its own
+    data and a warning is raised if it disagrees with the mirror rule."""
+    import warnings
+    s1 = _half_sign(P, team, *blocks[0])
+    signs = [s1 if i % 2 == 0 else -s1 for i in range(len(blocks))]
+    for (a, b), sg in zip(blocks[1:], signs[1:]):
+        if _half_sign(P, team, a, b) != sg:
+            warnings.warn("second-half side disagrees with the mirror of the first half")
     return signs
 
 

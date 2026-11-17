@@ -40,9 +40,9 @@ The ball is interpolated linearly across gaps of up to one second. On every fram
 
 The ball is missing on about 41% of the graded frames, and not in short blinks: in the graded halves there are 150 gaps, the median is around 10 seconds, and almost all missing frames sit in gaps longer than 3 seconds. A nearest-player rule has nothing to say there.
 
-For those frames we use a weak substitute that looks only at the players: how far forward each team's players are (in the direction each team attacks, which we read off where each side stands at kick-off), how wide each team is, where the centre of all players sits and how fast the teams are moving forward. A logistic regression turns that into a score. It is trained on this match's own tracking, using as labels the output of 3.1 on frames where a player is within 2 m of a visible ball. No person labelled anything.
+For those frames we use a weak substitute that looks only at the players: how far forward each team's players are (in the direction each team attacks, which we read from where each side stands on the median frame of the first half; the second half is the mirror image, because teams change ends), how wide each team is, where the centre of all players sits and how fast the teams are moving forward. A logistic regression turns that into a score. It is trained on this match's own tracking, using as labels the output of 3.1 on frames where a player is within 2 m of a visible ball. No person labelled anything.
 
-We checked it with 5-fold cross-validation split by time, against those same pseudo-labels: about 73% accuracy, where always guessing the home team would give 59%. That is a real but modest signal, so we gave it a small weight (0.15 times the score, capped at 2). It can only tip a possession if it points the same way for many seconds, and otherwise the label simply carries on from before.
+We checked it with 5-fold cross-validation split by time, against those same pseudo-labels: about 75% accuracy, where always guessing the home team would give 60%. That is a real but modest signal, so we gave it a small weight (0.15 times the score, capped at 2). It can only tip a possession if it points the same way for many seconds, and otherwise the label simply carries on from before.
 
 ### 3.3 Is the ball dead?
 
@@ -51,7 +51,7 @@ We use rules based on how a stoppage looks, and we did not fit them:
 - the median speed of the tracked players over a 4 s window is below 1.5 m/s (people are walking);
 - the ball is outside the pitch;
 - the ball is within 3 m of a line and moving slowly (under 2.5 m/s);
-- the tracker has lost the ball for at least 4 s while the players are walking;
+- the tracker has lost the ball for at least 4 s while the players are walking (here we allow a slightly higher speed, up to 1.9 m/s);
 - against all of that, a ball moving faster than 9 m/s is clearly alive.
 
 Each rule adds or subtracts a fixed amount of evidence. A single rule is never enough on its own, because teams do build up slowly with the ball in play.
@@ -91,7 +91,7 @@ We should be open about how we used the public five minutes. We looked at them t
 
 Dead ball is where we are weakest: precision 1.00 but recall 0.26. We output 13 possessions against 17 real ones, and 8 of ours match a real one at IoU 0.5.
 
-On the whole match the output has 265 possessions of 14.6 s on average and 106 stoppages of 23.4 s on average; dead ball is 39% of the graded frames. Those numbers look like football, but we have no way to check them against the truth.
+On the whole match the output has 264 possessions of 14.7 s on average and 106 stoppages of 23.4 s on average; dead ball is 39% of the graded frames. Those numbers look like football, but we have no way to check them against the truth.
 
 ![Our labels over the whole match](figures/match.svg)
 
